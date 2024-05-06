@@ -1,55 +1,10 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2024 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
+
 #include "main.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 #include "string.h"
-/* USER CODE END Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-#define slvaddr 0x7C
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
+#define slvaddr 0x7C					// I2C Address for the LCD
 
 I2C_HandleTypeDef hi2c1;
-
-UART_HandleTypeDef huart1;
-
-HCD_HandleTypeDef hhcd_USB_DRD_FS;
-
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -69,54 +24,24 @@ void lcd_moving_word(char *str);
 void lcd_clear();
 /* USER CODE END PFP */
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
-
-  /* Configure the System Power */
   SystemPower_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
+	
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ICACHE_Init();
-  MX_USART1_UART_Init();
-  MX_USB_DRD_FS_HCD_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  lcd_Init();
-  lcd_moving_word("WELCOME TO SYRA");
-//  lcd_send_string("HELLO");
+	
+  lcd_Init();							// Initializing the LCD
+  lcd_Print_String("HELLO");					// Printing to LCD
+  HAL_Delay(5000); 
+  Lcd_clear();
+  lcd_Moving_Word("WELCOME TO SYRA");				// Printing Moving Words to LCD
   /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
@@ -126,10 +51,6 @@ int main(void)
   /* USER CODE END 3 */
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -181,10 +102,6 @@ void SystemClock_Config(void)
   }
 }
 
-/**
-  * @brief Power Configuration
-  * @retval None
-  */
 static void SystemPower_Config(void)
 {
 
@@ -199,11 +116,6 @@ static void SystemPower_Config(void)
 /* USER CODE END PWR */
 }
 
-/**
-  * @brief I2C1 Initialization Function
-  * @param None
-  * @retval None
-  */
 static void MX_I2C1_Init(void)
 {
 
@@ -247,11 +159,6 @@ static void MX_I2C1_Init(void)
 
 }
 
-/**
-  * @brief ICACHE Initialization Function
-  * @param None
-  * @retval None
-  */
 static void MX_ICACHE_Init(void)
 {
 
@@ -278,95 +185,6 @@ static void MX_ICACHE_Init(void)
   /* USER CODE END ICACHE_Init 2 */
 
 }
-
-/**
-  * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART1_UART_Init(void)
-{
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetTxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetRxFifoThreshold(&huart1, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_DisableFifoMode(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART1_Init 2 */
-
-  /* USER CODE END USART1_Init 2 */
-
-}
-
-/**
-  * @brief USB_DRD_FS Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USB_DRD_FS_HCD_Init(void)
-{
-
-  /* USER CODE BEGIN USB_DRD_FS_Init 0 */
-
-  /* USER CODE END USB_DRD_FS_Init 0 */
-
-  /* USER CODE BEGIN USB_DRD_FS_Init 1 */
-
-  /* USER CODE END USB_DRD_FS_Init 1 */
-  hhcd_USB_DRD_FS.Instance = USB_DRD_FS;
-  hhcd_USB_DRD_FS.Init.dev_endpoints = 8;
-  hhcd_USB_DRD_FS.Init.Host_channels = 8;
-  hhcd_USB_DRD_FS.Init.speed = HCD_SPEED_FULL;
-  hhcd_USB_DRD_FS.Init.phy_itface = HCD_PHY_EMBEDDED;
-  hhcd_USB_DRD_FS.Init.Sof_enable = DISABLE;
-  hhcd_USB_DRD_FS.Init.low_power_enable = DISABLE;
-  hhcd_USB_DRD_FS.Init.vbus_sensing_enable = DISABLE;
-  hhcd_USB_DRD_FS.Init.bulk_doublebuffer_enable = DISABLE;
-  hhcd_USB_DRD_FS.Init.iso_singlebuffer_enable = DISABLE;
-  if (HAL_HCD_Init(&hhcd_USB_DRD_FS) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USB_DRD_FS_Init 2 */
-
-  /* USER CODE END USB_DRD_FS_Init 2 */
-
-}
-
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -394,39 +212,38 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(LED_GREEN_GPIO_Port, &GPIO_InitStruct);
 
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
+// LCD Functions Start Here
 
-void lcd_send_cmd(char data){
-	uint8_t cmd[2];
+void lcd_send_cmd(char data){						// Function to send command to LCD				
+	uint8_t cmd[2];							// LCD Command consists of 2 bytes
 	cmd[0] &= 0x00;
-	cmd[1] &= 0x00;
-	cmd[1] |= data;
+	cmd[1] &= 0x00;							// First byte is always zero while sending command to LCD
+	cmd[1] |= data;							// Second byte is the actulal command that is to be sent 
 	HAL_I2C_Master_Transmit(&hi2c1, slvaddr, cmd, 2, 100);
 }
 
-void lcd_send_data(char data){
-	uint8_t cmd[2];
+void lcd_Print(char data){						// Function to print on LCD
+	uint8_t cmd[2];							// Againg 2 bytes for printing 
 	cmd[0] &= 0x00;
-	cmd[0] |= 0x40;
+	cmd[0] |= 0x40;							// First byte is fixed for printing 
 	cmd[1] &= 0x00;
-	cmd[1] |= data;
+	cmd[1] |= data;							// Second byte contains data to print
 	HAL_I2C_Master_Transmit(&hi2c1, slvaddr, cmd, 2, 100);
 }
 
-void lcd_clear(){
+void lcd_clear(){							// Function to clear screen
 	lcd_send_cmd(0x01);
 }
 
-void lcd_send_string (char *str)
+void lcd_Print_String (char *str)
 {
-	while (*str) lcd_send_data (*str++);
+	while (*str) lcd_Print (*str++);
 }
 
-void lcd_set_cursor(int row, int col){
+void lcd_set_cursor(int row, int col){			// Function to Set Cursor to Desired Location on the LCD
 	switch(row){
 	case 1:
 		col |= 0x80;
@@ -439,33 +256,33 @@ void lcd_set_cursor(int row, int col){
 	col=0;
 }
 
-void lcd_Init(){
-	HAL_Delay(20);
-	lcd_send_cmd(0x20);
-	HAL_Delay(1);
-	lcd_send_cmd(0x0C);
-	HAL_Delay(1);
-	lcd_send_cmd(0x01);
-	HAL_Delay(1);
-	lcd_send_cmd(0x06);
-	HAL_Delay(1);
+void lcd_Moving_Word(char * str){			// Function for Moving Words.
+	int cnt=0;
+	lcd_set_cursor(1,15);				// Start printing from the end of the screen
+	while(1){
+	char pos = *(str+cnt);				// Traversing through each characters of the movig words
+	lcd_Print(pos);					// Print the characters in the word one by one
+	HAL_Delay(350);					// Delay between printing the characters
+	lcd_send_cmd(0x18);				// Using ENTRY MODE SET Command to shift the previous character to left by one position and cursor to the right.
+	cnt++;
+	if(cnt>=strlen(str)){
+		lcd_Print_String("    ");		// If end of the word reached, print some Space and continue again
+		cnt=0;
+		}
+
+	}
 }
 
-void lcd_moving_word(char * str){
-	int cnt=0;
-	lcd_set_cursor(1,15);
-	while(1){
-			char pos = *(str+cnt) ;
-			lcd_send_data(pos);
-		HAL_Delay(350);
-		lcd_send_cmd(0x18);
-		cnt++;
-		if(cnt>=strlen(str)){
-			lcd_send_string("    ");
-			cnt=0;
-		}
-
-		}
+void lcd_Init(){
+	HAL_Delay(20);
+	lcd_send_cmd(0x20);				// FUNCTION SET Command. We are using Onle line mode to display moving words
+	HAL_Delay(1);
+	lcd_send_cmd(0x0C);				// DISPLAY AND CURSOR ON/OFF Control Command
+	HAL_Delay(1);
+	lcd_send_cmd(0x01);				// Clear Display Command
+	HAL_Delay(1);
+	lcd_send_cmd(0x06);				// ENTRY MODE SET Command
+	HAL_Delay(1);
 }
 
 /* USER CODE END 4 */
